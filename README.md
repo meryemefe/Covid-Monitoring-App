@@ -4,4 +4,4 @@
 * Open terminal and type docker-compose up
 * Then, run the application
 
-** Ps. Only database was dockerized.
+** P.S. Only database was dockerized.
