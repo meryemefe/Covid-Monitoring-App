@@ -1,0 +1,12 @@
+version: '3.3'
+
+services:
+  #service 1: definition of mysql database
+  db:
+    image: mysql:latest
+    container_name: mysql-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=bilkentcs
+      - MYSQL_USER=root
+    ports:
+      - "3306:3306"
