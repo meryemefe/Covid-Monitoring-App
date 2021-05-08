@@ -525,4 +525,104 @@ class CovidMonitoringServiceApplicationTests {
 		symptomService.deleteDailySymptom(symptomToDelete);
 		Assertions.assertEquals(0, symptomService.getSymptomsByUserId(addedUser1.getId()).size());
 	}
+
+	@Test
+	void testEmergencyForUserNotHaveRecord() {
+		// Add user
+		User user = new User();
+		user.setUsername("trial1");
+		user.setEmail("trail1@gmail.com");
+		user.setPassword("pass123");
+		user.setAge(23);
+		user.setGender(Gender.FEMALE);
+		User addedUser = userService.add(user);
+
+		Assertions.assertEquals("You don't have any symptom record!", symptomService.getEmergencyStatus(addedUser.getId()));
+	}
+
+	@Test
+	void testEmergencyForUserHaveNotRecentRecord() {
+		// Add user
+		User user = new User();
+		user.setUsername("trial1");
+		user.setEmail("trail1@gmail.com");
+		user.setPassword("pass123");
+		user.setAge(23);
+		user.setGender(Gender.FEMALE);
+		User addedUser = userService.add(user);
+
+		// Add symptom for today
+		Symptom symptom1 = new Symptom();
+		symptom1.setUserId(addedUser.getId());
+		symptom1.setDate(LocalDate.now().minusDays(5));
+		symptom1.setFever(true);
+		symptom1.setDryCough(true);
+		symptom1.setTiredness(false);
+		symptom1.setLossOfTaste(false);
+		symptom1.setLossOfSmell(false);
+		symptom1.setSoreThroat(false);
+		symptom1.setHeadache(false);
+
+		Symptom addedSymptom1 = symptomService.addDailySymptom(symptom1);
+
+		Assertions.assertEquals("You did not enter any symptom for today. Please, add your daily symptom.", symptomService.getEmergencyStatus(addedUser.getId()));
+
+	}
+
+	@Test
+	void testEmergencyForDailyHealthyUser(){
+		// Add user
+		User user = new User();
+		user.setUsername("trial1");
+		user.setEmail("trail1@gmail.com");
+		user.setPassword("pass123");
+		user.setAge(23);
+		user.setGender(Gender.FEMALE);
+		User addedUser = userService.add(user);
+
+		// Add symptom for today
+		Symptom symptom1 = new Symptom();
+		symptom1.setUserId(addedUser.getId());
+		symptom1.setDate(LocalDate.now());
+		symptom1.setFever(true);
+		symptom1.setDryCough(true);
+		symptom1.setTiredness(false);
+		symptom1.setLossOfTaste(false);
+		symptom1.setLossOfSmell(false);
+		symptom1.setSoreThroat(false);
+		symptom1.setHeadache(false);
+
+		Symptom addedSymptom1 = symptomService.addDailySymptom(symptom1);
+
+		Assertions.assertEquals("You don't need to see a doctor for now. Take care of yourself!", symptomService.getEmergencyStatus(addedUser.getId()));
+	}
+
+	@Test
+	void testEmergencyForDailyUnhealthyUser() {
+
+		// Add user
+		User user = new User();
+		user.setUsername("trial1");
+		user.setEmail("trail1@gmail.com");
+		user.setPassword("pass123");
+		user.setAge(23);
+		user.setGender(Gender.FEMALE);
+		User addedUser = userService.add(user);
+
+		// Add symptom for today
+		Symptom symptom1 = new Symptom();
+		symptom1.setUserId(addedUser.getId());
+		symptom1.setDate(LocalDate.now());
+		symptom1.setFever(true);
+		symptom1.setDryCough(true);
+		symptom1.setTiredness(true);
+		symptom1.setLossOfTaste(true);
+		symptom1.setLossOfSmell(false);
+		symptom1.setSoreThroat(false);
+		symptom1.setHeadache(false);
+
+		Symptom addedSymptom1 = symptomService.addDailySymptom(symptom1);
+
+		Assertions.assertEquals("You should see a doctor!", symptomService.getEmergencyStatus(addedUser.getId()));
+	}
 }
