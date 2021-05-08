@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -23,7 +24,7 @@ public class SymptomController {
     @ApiOperation("Add a new daily symptom record")
     @PostMapping
     public AppResponse<Symptom> addSymptom(@RequestBody SymptomRequest request) {
-
+        request.setDate(LocalDate.now());
         Symptom symptomToAdd = request.toSymptom();
         Symptom symptom = symptomService.addDailySymptom(symptomToAdd);
         if (symptom == null){
