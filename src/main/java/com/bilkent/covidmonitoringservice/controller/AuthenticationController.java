@@ -4,6 +4,8 @@ import com.bilkent.covidmonitoringservice.entity.User;
 import com.bilkent.covidmonitoringservice.request.LoginRequest;
 import com.bilkent.covidmonitoringservice.security.CustomUserDetailsService;
 import com.bilkent.covidmonitoringservice.service.UserService;
+import com.bilkent.covidmonitoringservice.util.AppResponse;
+import com.bilkent.covidmonitoringservice.util.AppResponses;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/auth")
 public class AuthenticationController {
     @Autowired
@@ -28,7 +31,7 @@ public class AuthenticationController {
 
     @ApiOperation("Login to the system with user credentials")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public AppResponse<User> login(@RequestBody LoginRequest loginRequest) {
         SecurityContextHolder.clearContext();
         User user = null;
         try {
@@ -36,12 +39,12 @@ public class AuthenticationController {
             Authentication authentication =
                     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return new ResponseEntity<>(SecurityContextHolder.getContext().getAuthentication().getPrincipal(), HttpStatus.OK);
+            return AppResponses.from(user);
         } catch (Exception e) {
             if (user != null) {
-                return new ResponseEntity<>("Wrong password entered.", HttpStatus.OK);
+                return AppResponses.failure("Wrong password entered.");
             } else {
-                return new ResponseEntity<>("Wrong username entered.", HttpStatus.OK);
+                return AppResponses.failure("Wrong username entered.");
             }
         }
     }
