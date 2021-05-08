@@ -77,7 +77,8 @@ public class SymptomController {
     @ApiOperation("Get current emergency status of the user")
     @GetMapping("/status/{userId}")
     public AppResponse<String> getEmergencyStatus(@PathVariable Long userId){
-        return AppResponses.from("Not implemented yet.");
+        String response = symptomService.getEmergencyStatus(userId);
+        return AppResponses.from(response);
     }
 
 
